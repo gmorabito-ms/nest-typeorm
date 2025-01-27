@@ -1,4 +1,5 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductImage } from './product-image.entity';
 
 @Entity()
 export class Product {
@@ -20,7 +21,7 @@ export class Product {
     nullable: true,
   })
   description: string;
-
+  
   @Column({
     unique: true,
   })
@@ -39,6 +40,23 @@ export class Product {
   @Column('text')
   gender: string;
 
+  @Column({
+    type:'text',
+    array:true,
+    default:[]
+  })
+  tags: string[]
+
+
+  // one product many imgs
+  @OneToMany( // relation
+    () => ProductImage,
+    (producImage) => producImage.product,
+    {cascade:true, // any operation related will affect
+    eager:true} // will also bring all related data
+  )
+  images?:ProductImage[]
+
   @BeforeInsert()
   checkSlugInsert() {
     // automatic slug
@@ -52,5 +70,11 @@ export class Product {
       .replaceAll("'", '');
   }
 
-
+  @BeforeUpdate()
+  checkSlugUpdate(){
+    this.slug = this.slug
+      .toLocaleLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
 }
