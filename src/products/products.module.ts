@@ -13,6 +13,7 @@ import { ProductImage } from './entities/product-image.entity';
       Product,
       ProductImage
     ])
-  ]
+  ],
+  exports:[ProductsService]
 })
 export class ProductsModule {}
