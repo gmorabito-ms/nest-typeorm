@@ -1,4 +1,4 @@
 export interface JwtPayload {
-    email:string
+    id:string
     // something little because the payloas is on every request
 }
