@@ -8,33 +8,33 @@ import { ConfigService } from "@nestjs/config";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 
 @Injectable()
-export class JwStrategy extends PassportStrategy(Strategy){
+export class JwStrategy extends PassportStrategy(Strategy) {
 
     constructor(
         @InjectRepository(User)
-        private readonly useRepository:Repository<User>,
+        private readonly useRepository: Repository<User>,
 
-        configService:ConfigService
-    ){
+        configService: ConfigService
+    ) {
         super({
-        secretOrKey:configService.get('JWT_SECRET',"deault-secret" ),
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-    })
-}
+            secretOrKey: configService.get('JWT_SECRET', "deault-secret"),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+        })
+    }
 
-    async validate(payload:JwtPayload):Promise<User>{
-        const {id} = payload
+    async validate(payload: JwtPayload): Promise<User> {
+        const { id } = payload
 
-        const user = await this.useRepository.findOneBy({id})
+        const user = await this.useRepository.findOneBy({ id })
 
-        if (!user){
+        if (!user) {
             throw new UnauthorizedException('token not valid')
         }
 
-        if (!user.isActive){
+        if (!user.isActive) {
             throw new UnauthorizedException('inactive user. talk with an admin')
         }
-        
+
         return user
     }
 }
