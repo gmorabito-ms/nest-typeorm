@@ -7,7 +7,10 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/interfaces/valid-roles';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Product } from './entities/product.entity';
 
+@ApiTags('Products')
 @Controller('products')
 @Auth() // auth for any route
 export class ProductsController {
@@ -15,6 +18,9 @@ export class ProductsController {
 
   @Post()
   @Auth()
+  @ApiResponse({status:201, description:'Product was created', type: Product})
+  @ApiResponse({status:400, description:'Bad Request'})
+  @ApiResponse({status:403, description:'Token related'})
   create(
     @Body() createProductDto: CreateProductDto,
     @GetUser() user:User
